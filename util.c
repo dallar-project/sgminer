@@ -838,7 +838,7 @@ unsigned char *ser_string(char *s, int *slen)
 	size_t len = strlen(s);
 	unsigned char *ret;
 
-	ret = cgmalloc(1 + len + 8); // Leave room for largest size
+	ret = static_cast<unsigned char*>(cgmalloc(1 + len + 8)); // Leave room for largest size
 	if (len < 253) {
 		ret[0] = len;
 		cg_memcpy(ret + 1, s, len);

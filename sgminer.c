@@ -1571,7 +1571,7 @@ struct opt_table opt_config_table[] = {
       "Disable 'extranonce' stratum subscribe for pool"),
   OPT_WITH_ARG("--pass|--pool-pass|-p",
       set_pass, NULL, NULL,
-      "Password for groestlcoin JSON-RPC server"),
+      "Password for dallar JSON-RPC server"),
   OPT_WITHOUT_ARG("--per-device-stats",
       opt_set_bool, &want_per_device_stats,
       "Force verbose mode and output per-device statistics"),
@@ -1802,10 +1802,10 @@ struct opt_table opt_config_table[] = {
       "Set GPU thread concurrency for scrypt mining, comma separated"),
   OPT_WITH_ARG("--url|--pool-url|-o",
       set_url, NULL, NULL,
-      "URL for groestlcoin JSON-RPC server"),
+      "URL for dallar JSON-RPC server"),
   OPT_WITH_ARG("--user|--pool-user|-u",
       set_user, NULL, NULL,
-      "Username for groestlcoin JSON-RPC server"),
+      "Username for dallar JSON-RPC server"),
   OPT_WITH_ARG("--vectors",
       set_vector, NULL, NULL,
       opt_hidden),
@@ -1822,7 +1822,7 @@ struct opt_table opt_config_table[] = {
       "Override detected optimal worksize - one value or comma separated list"),
   OPT_WITH_ARG("--userpass|--pool-userpass|-O",
       set_userpass, NULL, NULL,
-      "Username:Password pair for groestlcoin JSON-RPC server"),
+      "Username:Password pair for dallar JSON-RPC server"),
   OPT_WITHOUT_ARG("--worktime",
       opt_set_bool, &opt_worktime,
       "Display extra work time debug information"),
@@ -1840,7 +1840,7 @@ struct opt_table opt_config_table[] = {
   #ifdef HAVE_LIBCURL
 	OPT_WITH_ARG("--grs-address",
 		     opt_set_charp, NULL, &opt_grs_address,
-		     "Set groestlcoin target address when solo mining to groestlcoind (mandatory)"),
+		     "Set dallar target address when solo mining to dallard (mandatory)"),
 	OPT_WITH_ARG("--grs-sig",
 		     opt_set_charp, NULL, &opt_grs_sig,
 		     "Set signature to add to coinbase when solo mining (optional)"),
@@ -2330,7 +2330,7 @@ static void gbt_merkle_bins(struct pool *pool, json_t *transaction_arr)
 	pool->merkles = 0;
 	pool->transactions = json_array_size(transaction_arr);
 	binlen = pool->transactions * 32 + 32;
-	hashbin = alloca(binlen + 32);
+	hashbin = static_cast<unsigned char*>(alloca(binlen + 32));
 	memset(hashbin, 0, 32);
 	binleft = binlen / 32;
 	if (pool->transactions) {
@@ -2348,7 +2348,7 @@ static void gbt_merkle_bins(struct pool *pool, json_t *transaction_arr)
 			len += strlen(txn);
 		}
 
-		pool->txn_data = cgmalloc(len + 1);
+		pool->txn_data = static_cast<char*>(cgmalloc(len + 1));
 		pool->txn_data[len] = '\0';
 
 		for (i = 0; i < pool->transactions; i++) {
@@ -2366,7 +2366,7 @@ static void gbt_merkle_bins(struct pool *pool, json_t *transaction_arr)
 				int txn_len;
 
 				txn_len = len / 2;
-				txn_bin = cgmalloc(txn_len);
+				txn_bin = static_cast<unsigned char*>(cgmalloc(txn_len));
 				hex2bin(txn_bin, txn, txn_len);
 				/* This is needed for pooled mining since only
 				 * transaction data and not hashes are sent */
@@ -2569,7 +2569,7 @@ static bool gbt_solo_decode(struct pool *pool, json_t *res_val)
 		+ 1 + 25 // txout
 		+ 4; // lock
 	free(pool->coinbase);
-	pool->coinbase = cgcalloc(len, 1);
+	pool->coinbase = static_cast<unsigned char*>(cgcalloc(len, 1));
 	cg_memcpy(pool->coinbase + 41, pool->scriptsig_base, ofs);
 	cg_memcpy(pool->coinbase + 41 + ofs, "\xff\xff\xff\xff", 4);
 	pool->coinbase[41 + ofs + 4] = 1;
@@ -6256,10 +6256,10 @@ static bool setup_gbt_solo(CURL *curl, struct pool *pool)
 	if (!valid_val)
 		goto out;
 	if (!json_is_true(valid_val)) {
-		applog(LOG_ERR, "Groestlcoin address %s is NOT valid", opt_grs_address);
+		applog(LOG_ERR, "Dallar address %s is NOT valid", opt_grs_address);
 		goto out;
 	}
-	applog(LOG_NOTICE, "Solo mining to valid GRS address: %s", opt_grs_address);
+	applog(LOG_NOTICE, "Solo mining to valid DAL address: %s", opt_grs_address);
 	ret = true;
 	address_to_pubkeyhash(pool->script_pubkey, opt_grs_address);
 	hex2bin(scriptsig_header_bin, scriptsig_header, 41);

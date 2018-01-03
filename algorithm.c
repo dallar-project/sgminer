@@ -22,6 +22,7 @@
 #include "algorithm/myriadcoin-groestl.h"
 #include "algorithm/fuguecoin.h"
 #include "algorithm/groestlcoin.h"
+#include "algorithm/dallar.h"
 #include "algorithm/twecoin.h"
 #include "algorithm/marucoin.h"
 #include "algorithm/maxcoin.h"
@@ -800,6 +801,7 @@ static algorithm_settings_t algos[] = {
   { a, ALGO_FUGUE, "", 1, 256, 256, 0, 0, 0xFF, 0xFFFFULL, 0x0000ffffUL, 0, 0, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, b, queue_sph_kernel, c, NULL }
   A_FUGUE("fuguecoin", fuguecoin_regenhash, sha256),
   A_FUGUE("groestlcoin", groestlcoin_regenhash, sha256),
+  A_FUGUE("dallar", dallar_regenhash, sha256),
   A_FUGUE("diamond", groestlcoin_regenhash, gen_hash),
 #undef A_FUGUE
 

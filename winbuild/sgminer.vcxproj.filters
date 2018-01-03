@@ -218,6 +218,9 @@
     <ClCompile Include="..\algorithm\pluck.c">
       <Filter>Source Files\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\algorithm\dallar.c">
+      <Filter>Source Files\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\adl.h">
@@ -415,8 +418,12 @@
     <ClInclude Include="..\algorithm\pluck.h">
       <Filter>Header Files\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\algorithm\dallar.h">
+      <Filter>Header Files\algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.txt" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

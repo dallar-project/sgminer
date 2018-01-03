@@ -65,11 +65,15 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <NuGetPackageImportStamp>d2c84da7</NuGetPackageImportStamp>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)output\x86\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)output\x86\obj\</IntDir>
+    <IncludePath>C:\Program Files %28x86%29\AMD APP SDK\3.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\AMD APP SDK\3.0\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -80,6 +84,8 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)output\x86\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)output\x86\obj\</IntDir>
+    <IncludePath>C:\Program Files %28x86%29\AMD APP SDK\3.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\AMD APP SDK\3.0\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -106,7 +112,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)dist\lib\x86;$(ProjectDir)jansson\Debug\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>
@@ -114,9 +120,8 @@
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>
-        xcopy /Y /E /I "$(ProjectDir)..\kernel" "$(OutDir)\kernel"
-      </Command>
+      <Command>xcopy /Y /E /I "$(ProjectDir)dist\bin\x86\*.dll" "$(OutDir)"
+xcopy /Y /E /I "$(ProjectDir)..\kernel" "$(OutDir)\kernel"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -193,7 +198,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>false</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)dist\lib\x86;$(ProjectDir)jansson\Release\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>
       </LinkTimeCodeGeneration>
@@ -263,6 +268,7 @@
     <ClCompile Include="..\algorithm.c" />
     <ClCompile Include="..\algorithm\animecoin.c" />
     <ClCompile Include="..\algorithm\bitblock.c" />
+    <ClCompile Include="..\algorithm\dallar.c" />
     <ClCompile Include="..\algorithm\lyra2.c" />
     <ClCompile Include="..\algorithm\lyra2re.c" />
     <ClCompile Include="..\algorithm\neoscrypt.c" />
@@ -328,6 +334,7 @@
     <ClInclude Include="..\algorithm.h" />
     <ClInclude Include="..\algorithm\animecoin.h" />
     <ClInclude Include="..\algorithm\bitblock.h" />
+    <ClInclude Include="..\algorithm\dallar.h" />
     <ClInclude Include="..\algorithm\lyra2.h" />
     <ClInclude Include="..\algorithm\lyra2re.h" />
     <ClInclude Include="..\algorithm\neoscrypt.h" />
@@ -391,9 +398,19 @@
     <ClInclude Include="dist\include\winbuild.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="README.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\openssl.v120.dyn-rt.static.1.0.2.6\build\native\openssl.v120.dyn-rt.static.targets" Condition="Exists('packages\openssl.v120.dyn-rt.static.1.0.2.6\build\native\openssl.v120.dyn-rt.static.targets')" />
+    <Import Project="packages\curl.v120.dyn-rt.static.7.48.0.0\build\native\curl.v120.dyn-rt.static.targets" Condition="Exists('packages\curl.v120.dyn-rt.static.7.48.0.0\build\native\curl.v120.dyn-rt.static.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\openssl.v120.dyn-rt.static.1.0.2.6\build\native\openssl.v120.dyn-rt.static.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\openssl.v120.dyn-rt.static.1.0.2.6\build\native\openssl.v120.dyn-rt.static.targets'))" />
+    <Error Condition="!Exists('packages\curl.v120.dyn-rt.static.7.48.0.0\build\native\curl.v120.dyn-rt.static.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\curl.v120.dyn-rt.static.7.48.0.0\build\native\curl.v120.dyn-rt.static.targets'))" />
+  </Target>
 </Project>
